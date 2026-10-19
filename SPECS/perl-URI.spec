@@ -7,11 +7,15 @@
 
 Name:           perl-URI
 Version:        1.73
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A Perl module implementing URI parsing and manipulation
 License:        GPL+ or Artistic
 URL:            http://search.cpan.org/dist/URI/
 Source0:        http://www.cpan.org/authors/id/E/ET/ETHER/URI-%{version}.tar.gz
+
+# https://github.com/libwww-perl/URI/commit/8c213ff92fdae45d0fabb7bc16f6a6f27e911395
+Patch0:         perl-URI-1.73-CVE-2026-19953.patch
+
 BuildArch:      noarch
 # Module Build
 BuildRequires:  coreutils
@@ -34,6 +38,7 @@ BuildRequires:  perl(overload)
 BuildRequires:  perl(parent)
 BuildRequires:  perl(Scalar::Util)
 BuildRequires:  perl(strict)
+BuildRequires:  perl(Unicode::Normalize)
 BuildRequires:  perl(utf8)
 BuildRequires:  perl(warnings)
 # Test Suite
@@ -44,6 +49,7 @@ BuildRequires:  perl(File::Temp)
 BuildRequires:  perl(Storable)
 BuildRequires:  perl(Test)
 BuildRequires:  perl(Test::More) >= 0.96
+BuildRequires:  perl(Test::Fatal)
 BuildRequires:  perl(Test::Needs)
 # Runtime
 Requires:       perl(:MODULE_COMPAT_%(eval "`perl -V:version`"; echo $version))
@@ -71,6 +77,7 @@ updated by RFC 2732).
 
 %prep
 %setup -q -n URI-%{version}
+%patch0 -p1
 chmod -c 644 uri-test
 
 %build
@@ -102,6 +109,10 @@ make test
 %{_mandir}/man3/URI::ldap.3*
 
 %changelog
+* Fri Oct 02 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 1.73-4
+- CVE-2026-19953 perl-URI: URI (for Perl): Security bypass due to incorrect hostname encoding via missing Unicode normalization
+  incorrect hostname encoding via missing Unicode normalization
+
 * Wed Jul 11 2018 Petr Pisar <ppisar@redhat.com> - 1.73-3
 - Disable Business::ISBN feature
 
