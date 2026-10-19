@@ -7,11 +7,14 @@
 
 Name:           perl-URI
 Version:        5.09
-Release:        3%{?dist}
+Release:        3%{?dist}.1
 Summary:        A Perl module implementing URI parsing and manipulation
 License:        GPL+ or Artistic
 URL:            https://metacpan.org/release/URI
 Source0:        https://cpan.metacpan.org/modules/by-module/URI/URI-%{version}.tar.gz
+# https://issues.redhat.com/browse/RHEL-275730
+# https://github.com/libwww-perl/URI/commit/8c213ff92fdae45d0fabb7bc16f6a6f27e911395
+Patch0:         perl-URI-5.09-CVE-2026-19953.patch
 BuildArch:      noarch
 # Module Build
 BuildRequires:  coreutils
@@ -33,6 +36,7 @@ BuildRequires:  perl(overload)
 BuildRequires:  perl(parent)
 BuildRequires:  perl(Scalar::Util)
 BuildRequires:  perl(strict)
+BuildRequires:  perl(Unicode::Normalize)
 BuildRequires:  perl(utf8)
 BuildRequires:  perl(warnings)
 # Test Suite
@@ -42,6 +46,7 @@ BuildRequires:  perl(File::Spec::Functions)
 BuildRequires:  perl(File::Temp)
 BuildRequires:  perl(Storable)
 BuildRequires:  perl(Test)
+BuildRequires:  perl(Test::Fatal)
 BuildRequires:  perl(Test::More) >= 0.96
 BuildRequires:  perl(Test::Needs)
 # Runtime
@@ -82,6 +87,7 @@ with "%{_libexecdir}/%{name}/test".
 
 %prep
 %setup -q -n URI-%{version}
+%patch -P 0 -p1
 chmod -c 644 uri-test
 
 for F in t/*.t t/*.pl; do
@@ -139,6 +145,11 @@ make test
 %{_libexecdir}/%{name}
 
 %changelog
+* Mon Oct 12 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 5.09-3.1
+- CVE-2026-19953 perl-URI: URI (for Perl): Security bypass due to incorrect hostname encoding via missing Unicode normalization
+  incorrect hostname encoding via missing Unicode normalization
+  Resolves: RHEL-275730
+
 * Mon Aug 09 2021 Mohan Boddu <mboddu@redhat.com> - 5.09-3
 - Rebuilt for IMA sigs, glibc 2.34, aarch64 flags
   Related: rhbz#1991688
