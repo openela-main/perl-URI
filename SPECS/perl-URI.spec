@@ -9,11 +9,13 @@
 
 Name:           perl-URI
 Version:        5.27
-Release:        3%{?dist}
+Release:        3%{?dist}.1
 Summary:        A Perl module implementing URI parsing and manipulation
 License:        GPL-1.0-or-later OR Artistic-1.0-Perl
 URL:            https://metacpan.org/release/URI
 Source0:        https://cpan.metacpan.org/modules/by-module/URI/URI-%{version}.tar.gz
+# https://github.com/libwww-perl/URI/commit/8c213ff92fdae45d0fabb7bc16f6a6f27e911395
+Patch0:         perl-URI-5.27-CVE-2026-19953.patch
 BuildArch:      noarch
 # Module Build
 BuildRequires:  coreutils
@@ -37,6 +39,7 @@ BuildRequires:  perl(overload)
 BuildRequires:  perl(parent)
 BuildRequires:  perl(Scalar::Util)
 BuildRequires:  perl(strict)
+BuildRequires:  perl(Unicode::Normalize)
 BuildRequires:  perl(utf8)
 BuildRequires:  perl(warnings)
 # Test Suite
@@ -92,6 +95,7 @@ with "%{_libexecdir}/%{name}/test".
 
 %prep
 %setup -q -n URI-%{version}
+%patch -P 0 -p1
 chmod -c 644 uri-test
 
 for F in t/*.t t/*.pl; do
@@ -148,6 +152,11 @@ make test
 %{_libexecdir}/%{name}
 
 %changelog
+* Wed Oct 14 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 5.27-3.1
+- CVE-2026-19953 perl-URI: URI (for Perl): Security bypass due to incorrect hostname encoding via missing Unicode normalization
+  hostname encoding via missing Unicode normalization
+  Resolves: RHEL-274901
+
 * Tue Oct 29 2024 Troy Dawson <tdawson@redhat.com> - 5.27-3
 - Bump release for October 2024 mass rebuild:
   Resolves: RHEL-64018
