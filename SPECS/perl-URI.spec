@@ -3,11 +3,13 @@
 
 Name:           perl-URI
 Version:        1.76
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        A Perl module implementing URI parsing and manipulation
 License:        GPL+ or Artistic
 URL:            https://metacpan.org/release/URI
 Source0:        https://cpan.metacpan.org/authors/id/O/OA/OALDERS/URI-%{version}.tar.gz
+# https://github.com/libwww-perl/URI/commit/8c213ff92fdae45d0fabb7bc16f6a6f27e911395
+Patch0:         perl-URI-1.76-CVE-2026-19953.patch
 BuildArch:      noarch
 # Module Build
 BuildRequires:  coreutils
@@ -29,6 +31,7 @@ BuildRequires:  perl(overload)
 BuildRequires:  perl(parent)
 BuildRequires:  perl(Scalar::Util)
 BuildRequires:  perl(strict)
+BuildRequires:  perl(Unicode::Normalize)
 BuildRequires:  perl(utf8)
 BuildRequires:  perl(warnings)
 # Test Suite
@@ -46,6 +49,7 @@ Requires:       perl(Cwd)
 Requires:       perl(Data::Dumper)
 Requires:       perl(Encode)
 Requires:       perl(MIME::Base64) >= 2
+Requires:       perl(Unicode::Normalize)
 Requires:       perl(Net::Domain)
 Requires:       perl(utf8)
 
@@ -66,6 +70,7 @@ updated by RFC 2732).
 
 %prep
 %setup -q -n URI-%{version}
+%patch -P 0 -p1
 chmod -c 644 uri-test
 
 %build
@@ -97,6 +102,11 @@ make test
 %{_mandir}/man3/URI::ldap.3*
 
 %changelog
+* Mon Oct 12 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 1.76-6
+- CVE-2026-19953 perl-URI: URI (for Perl): Security bypass due to incorrect hostname encoding via missing Unicode normalization
+  incorrect hostname encoding via missing Unicode normalization
+- Update test to remove build require perl(Test::Fatal)
+
 * Fri Jul 26 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.76-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
