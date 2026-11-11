@@ -7,12 +7,11 @@
 
 Name:           perl-URI
 Version:        5.09
-Release:        3%{?dist}.1
+Release:        4%{?dist}
 Summary:        A Perl module implementing URI parsing and manipulation
 License:        GPL+ or Artistic
 URL:            https://metacpan.org/release/URI
 Source0:        https://cpan.metacpan.org/modules/by-module/URI/URI-%{version}.tar.gz
-# https://issues.redhat.com/browse/RHEL-275730
 # https://github.com/libwww-perl/URI/commit/8c213ff92fdae45d0fabb7bc16f6a6f27e911395
 Patch0:         perl-URI-5.09-CVE-2026-19953.patch
 BuildArch:      noarch
@@ -87,7 +86,7 @@ with "%{_libexecdir}/%{name}/test".
 
 %prep
 %setup -q -n URI-%{version}
-%patch -P 0 -p1
+%patch0 -p1
 chmod -c 644 uri-test
 
 for F in t/*.t t/*.pl; do
@@ -145,10 +144,10 @@ make test
 %{_libexecdir}/%{name}
 
 %changelog
-* Mon Oct 12 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 5.09-3.1
+* Fri Oct 02 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 5.09-4
 - CVE-2026-19953 perl-URI: URI (for Perl): Security bypass due to incorrect hostname encoding via missing Unicode normalization
   incorrect hostname encoding via missing Unicode normalization
-  Resolves: RHEL-275730
+  Resolves: RHEL-275742
 
 * Mon Aug 09 2021 Mohan Boddu <mboddu@redhat.com> - 5.09-3
 - Rebuilt for IMA sigs, glibc 2.34, aarch64 flags
